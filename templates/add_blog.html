@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 120px 4% 60px 4%; max-width: 800px; margin: 0 auto;">
+    <h1 style="color: #e50914; margin-bottom: 30px;">Add Daily Blog Post</h1>
+    
+    <form method="POST" style="background: #333; padding: 30px; border-radius: 8px;">
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; color: #fff;">Blog Title:</label>
+            <input type="text" name="title" required style="width: 100%; padding: 10px; background: #141414; border: 1px solid #555; color: #fff; border-radius: 4px;">
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; color: #fff;">Content:</label>
+            <textarea name="content" required rows="10" style="width: 100%; padding: 10px; background: #141414; border: 1px solid #555; color: #fff; border-radius: 4px;"></textarea>
+        </div>
+        
+        <button type="submit" class="btn-primary">Publish Blog</button>
+        <a href="{{ url_for('blog') }}" class="btn-secondary" style="margin-left: 10px;">Cancel</a>
+    </form>
+</div>
+{% endblock %}

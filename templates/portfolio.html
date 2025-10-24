@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Portfolio - Dhruvi Mittal{% endblock %}
+
+{% block content %}
+<section class="portfolio-hero">
+    <div class="container">
+        <h1 class="page-title">My Portfolio</h1>
+        <p class="page-subtitle">Explore my projects and technical achievements</p>
+    </div>
+</section>
+
+<section class="portfolio-content">
+    <div class="container">
+        <div class="portfolio-grid">
+            {% for project in projects %}
+            <div class="portfolio-card">
+                <div class="card-image">
+                    {% if project.title == 'Dhruvi Tech' %}
+                        <img src="{{ url_for('static', filename='images/dhruvi-tech.png') }}" alt="{{ project.title }}">
+                    {% elif project.title == 'File Encryption Tool' %}
+                        <img src="{{ url_for('static', filename='images/File-Encryption-Tool.png') }}" alt="{{ project.title }}">
+                    {% elif project.title == 'Firebase Chat App' %}
+                        <img src="{{ url_for('static', filename='images/firebase-chat-app.png') }}" alt="{{ project.title }}">
+                    {% elif project.title == 'Quote App' %}
+                        <img src="{{ url_for('static', filename='images/Quote_app.png') }}" alt="{{ project.title }}">
+                    {% elif project.title == 'Secure Distributed File Backup System' %}
+                        <img src="{{ url_for('static', filename='images/Secure-Distributed-File-Backup-System.png') }}" alt="{{ project.title }}">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="{{ project.title }}">
+                    {% endif %}
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">{{ project.title }}</h3>
+                    <p class="card-description">{{ project.description }}</p>
+                    {% if project.tech_stack %}
+                        <div class="tech-stack">
+                            {% for tech in project.tech_stack.split(',') %}
+                                <span class="tech-tag">{{ tech.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="card-actions">
+                        {% if project.github_link %}
+                            <a href="{{ project.github_link }}" target="_blank" class="btn-outline">
+                                <i class="fab fa-github"></i> View Code
+                            </a>
+                        {% endif %}
+                        {% if current_user.is_authenticated %}
+                            <button class="favorite-btn" data-project-id="{{ project.id }}">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+.portfolio-hero {
+    padding: 120px 0 60px 0;
+    background: linear-gradient(135deg, var(--netflix-dark) 0%, var(--netflix-gray) 100%);
+    text-align: center;
+}
+
+.page-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, var(--netflix-white) 0%, var(--netflix-red) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-subtitle {
+    font-size: 1.2rem;
+    color: var(--netflix-light-gray);
+}
+
+.portfolio-content {
+    padding: 60px 0;
+    background-color: var(--netflix-black);
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.portfolio-card {
+    background-color: var(--netflix-gray);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.portfolio-card .card-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+.portfolio-card .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.portfolio-card:hover .card-image img {
+    transform: scale(1.1);
+}
+
+.portfolio-card .card-content {
+    padding: 20px;
+}
+
+.portfolio-card .card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--netflix-white);
+}
+
+.portfolio-card .card-description {
+    font-size: 1rem;
+    color: var(--netflix-light-gray);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.favorite-btn {
+    background: none;
+    border: none;
+    color: var(--netflix-light-gray);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.favorite-btn:hover,
+.favorite-btn.favorited {
+    color: var(--netflix-red);
+}
+
+@media (max-width: 768px) {
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+    }
+}
+</style>
+{% endblock %}

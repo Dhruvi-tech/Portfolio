@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-background">
+        <video autoplay muted loop class="hero-video">
+            <source src="{{ url_for('static', filename='images/hero.mp4') }}" type="video/mp4">
+        </video>
+        <div class="hero-gradient"></div>
+    </div>
+    
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1 class="hero-title">{{ profile.name }}</h1>
+            <p class="hero-subtitle">{{ profile.degree }}</p>
+            <p class="hero-description">{{ profile.headline }}</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('portfolio') }}" class="btn-primary">
+                    <i class="fas fa-play"></i> View Portfolio
+                </a>
+                <a href="#about" class="btn-secondary">
+                    <i class="fas fa-info-circle"></i> More Info
+                </a>
+            </div>
+        </div>
+        <div class="hero-profile">
+            <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Dhruvi Mittal" class="profile-image">
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="about-section">
+    <div class="container">
+        <h2 class="section-title">About Me</h2>
+        <p class="about-text">{{ profile.about }}</p>
+    </div>
+</section>
+
+<!-- Featured Projects Row -->
+<section class="content-row">
+    <div class="container">
+        <h2 class="row-title">Featured Projects</h2>
+        <div class="row-container">
+            <div class="row-slider" id="projects-slider">
+                {% for project in projects %}
+                <div class="card project-card" data-project-id="{{ project.id }}" onclick="openProjectModal({{ project.id }})">
+                    <div class="card-image">
+                        {% if project.image %}
+                            <img src="{{ url_for('static', filename='images/' + project.image) }}" alt="{{ project.title }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=320&h=180&fit=crop" alt="{{ project.title }}">
+                        {% endif %}
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">{{ project.title }}</h3>
+                        <p class="card-description">{{ project.description[:100] }}...</p>
+                        {% if project.tech_stack %}
+                            <div class="tech-stack">
+                                {% for tech in project.tech_stack.split(',') %}
+                                    <span class="tech-tag">{{ tech.strip() }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-overlay">
+                        <div class="overlay-content">
+                            <h3>{{ project.title }}</h3>
+                            <p>Click to view details</p>
+                            <div class="overlay-buttons">
+                                <button class="btn-outline" onclick="event.stopPropagation(); openProjectModal({{ project.id }})">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </button>
+                                {% if project.github_link %}
+                                    <a href="{{ project.github_link }}" target="_blank" class="btn-outline" onclick="event.stopPropagation()">
+                                        <i class="fab fa-github"></i> Code
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card">
+                    <div class="card-content">
+                        <h3>No Projects Yet</h3>
+                        <p>Projects will appear here once added.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="slider-btn slider-btn-left" onclick="slideLeft('projects-slider')">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="slider-btn slider-btn-right" onclick="slideRight('projects-slider')">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Latest Blog Posts Row -->
+<section class="content-row">
+    <div class="container">
+        <h2 class="row-title">Daily Blogs</h2>
+        <div class="row-container">
+            <div class="row-slider" id="blog-slider">
+                {% for post in posts %}
+                <div class="card blog-card" onclick="openBlogModal({{ post.id }})">
+                    <div class="card-image">
+                        {% set blog_images = [
+                            'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=320&h=180&fit=crop',
+                            'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=320&h=180&fit=crop',
+                            'https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=320&h=180&fit=crop',
+                            'https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=320&h=180&fit=crop',
+                            'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=320&h=180&fit=crop'
+                        ] %}
+                        <img src="{{ blog_images[loop.index0 % blog_images|length] }}" alt="{{ post.title }}">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">{{ post.title }}</h3>
+                        <p class="card-description">{{ post.content[:100] }}...</p>
+                        <div class="card-meta">
+                            <span class="author">By Dhruvi</span>
+                            <span class="date">{{ post.created_at.strftime('%B %d, %Y') }}</span>
+                        </div>
+                    </div>
+                    <div class="card-overlay">
+                        <div class="overlay-content">
+                            <h3>{{ post.title }}</h3>
+                            <p>Click to read full blog</p>
+                            <button class="btn-outline" onclick="event.stopPropagation(); openBlogModal({{ post.id }})">
+                                <i class="fas fa-book-open"></i> Read More
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card">
+                    <div class="card-content">
+                        <h3>No Blog Posts Yet</h3>
+                        <p>Blog posts will appear here once added.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="slider-btn slider-btn-left" onclick="slideLeft('blog-slider')">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="slider-btn slider-btn-right" onclick="slideRight('blog-slider')">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Tech News Row -->
+<section class="content-row">
+    <div class="container">
+        <h2 class="row-title">Latest Tech News</h2>
+        <div class="row-container">
+            <div class="row-slider" id="news-slider">
+                {% for article in news %}
+                <div class="card news-card" onclick="openNewsModal({{ article.id }})">
+                    <div class="card-image">
+                        {% if article.image_url %}
+                            <img src="{{ article.image_url }}" alt="{{ article.title }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=200&fit=crop" alt="{{ article.title }}">
+                        {% endif %}
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">{{ article.title }}</h3>
+                        <div class="card-meta">
+                            <span class="source">{{ article.source }}</span>
+                            {% if article.published_at %}
+                                <span class="date">{{ article.published_at.strftime('%B %d, %Y') }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-overlay">
+                        <div class="overlay-content">
+                            <h3>{{ article.title }}</h3>
+                            <p>Click to view details</p>
+                            <div class="overlay-buttons">
+                                <button class="btn-outline" onclick="event.stopPropagation(); openNewsModal({{ article.id }})">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </button>
+                                {% if article.link %}
+                                    <a href="{{ article.link }}" target="_blank" class="btn-outline" onclick="event.stopPropagation()">
+                                        <i class="fas fa-external-link-alt"></i> Read Article
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card">
+                    <div class="card-content">
+                        <h3>No News Yet</h3>
+                        <p>Tech news will appear here once loaded.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="slider-btn slider-btn-left" onclick="slideLeft('news-slider')">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="slider-btn slider-btn-right" onclick="slideRight('news-slider')">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Let's Build Something Amazing Together</h2>
+        <p>Interested in collaborating or have a project in mind?</p>
+        <div class="cta-buttons">
+            <a href="mailto:dhruvi@example.com" class="btn-primary">
+                <i class="fas fa-envelope"></i> Get In Touch
+            </a>
+            <a href="https://www.linkedin.com/in/dhruvi-mittal/" target="_blank" class="btn-secondary">
+                <i class="fab fa-linkedin"></i> LinkedIn
+            </a>
+            <a href="https://github.com/Dhruvi-tech" target="_blank" class="btn-secondary">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div id="modal-body">
+            <!-- Modal content will be loaded here -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- Floating Elements -->
+<div class="floating-elements">
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+</div>
+
+<!-- Scroll Progress Bar -->
+<div class="scroll-progress" id="scroll-progress"></div>
+
+{% block scripts %}
+<script>
+// Scroll Progress Bar
+window.addEventListener('scroll', () => {
+    const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('scroll-progress').style.width = scrolled + '%';
+});
+
+// Slider Functions
+function slideLeft(sliderId) {
+    const slider = document.getElementById(sliderId);
+    slider.scrollBy({ left: -340, behavior: 'smooth' });
+}
+
+function slideRight(sliderId) {
+    const slider = document.getElementById(sliderId);
+    slider.scrollBy({ left: 340, behavior: 'smooth' });
+}
+
+// Smooth Scroll for Navigation
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+
+// Card Hover Effects
+document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.08) translateY(-15px)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1) translateY(0)';
+    });
+});
+
+// Header Scroll Effect
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('.netflix-header');
+    if (window.scrollY > 100) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
+// Modal Functions
+function openProjectModal(projectId) {
+    fetch(`/project/${projectId}`)
+        .then(response => response.json())
+        .then(data => {
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="modal-header">
+                    <h2>${data.title}</h2>
+                </div>
+                <div class="modal-project-content">
+                    <div class="modal-image">
+                        <img src="/static/images/${data.image || 'dhruvi-tech.png'}" alt="${data.title}">
+                    </div>
+                    <div class="modal-details">
+                        <p class="modal-description">${data.description}</p>
+                        <div class="modal-tech-stack">
+                            <h4>Technologies Used:</h4>
+                            <div class="tech-tags">
+                                ${data.tech_stack ? data.tech_stack.split(',').map(tech => 
+                                    `<span class="tech-tag">${tech.trim()}</span>`
+                                ).join('') : ''}
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            ${data.github_link ? 
+                                `<a href="${data.github_link}" target="_blank" class="btn-primary">
+                                    <i class="fab fa-github"></i> View on GitHub
+                                </a>` : ''
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'flex';
+        });
+}
+
+function openBlogModal(postId) {
+    fetch(`/blog/${postId}`)
+        .then(response => response.json())
+        .then(data => {
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="modal-header">
+                    <h2>${data.title}</h2>
+                    <div class="modal-meta">
+                        <span>By ${data.author}</span>
+                        <span>${data.created_at}</span>
+                    </div>
+                </div>
+                <div class="modal-blog-content">
+                    <div class="modal-text">
+                        ${data.content.split('\\n').map(paragraph => 
+                            `<p>${paragraph}</p>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'flex';
+        });
+}
+
+function openNewsModal(newsId) {
+    fetch(`/news/${newsId}`)
+        .then(response => response.json())
+        .then(data => {
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="modal-header">
+                    <h2>${data.title}</h2>
+                    <div class="modal-meta">
+                        <span>${data.source}</span>
+                        <span>${data.published_at}</span>
+                    </div>
+                </div>
+                <div class="modal-news-content">
+                    <div class="modal-image">
+                        <img src="${data.image_url || 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=200&fit=crop'}" alt="${data.title}">
+                    </div>
+                    <div class="modal-actions">
+                        ${data.link ? 
+                            `<a href="${data.link}" target="_blank" class="btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Read Full Article
+                            </a>` : ''
+                        }
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'flex';
+        });
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('modal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

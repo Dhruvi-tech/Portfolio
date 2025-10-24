@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Tech News - Dhruvi Mittal{% endblock %}
+
+{% block content %}
+<section class="news-hero">
+    <div class="container">
+        <h1 class="page-title">Daily Tech News</h1>
+        <p class="page-subtitle">Stay updated with the latest technology trends and news</p>
+    </div>
+</section>
+
+<section class="news-content">
+    <div class="container">
+        {% if news %}
+            <div class="news-grid">
+                {% for article in news %}
+                <article class="news-card">
+                    <div class="news-image">
+                        {% if article.image_url %}
+                            <img src="{{ article.image_url }}" alt="{{ article.title }}" onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=350&h=200&fit=crop'">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=350&h=200&fit=crop" alt="{{ article.title }}">
+                        {% endif %}
+                    </div>
+                    <div class="news-content-inner">
+                        <h2 class="news-title">{{ article.title }}</h2>
+                        <div class="news-meta">
+                            <span class="source">
+                                <i class="fas fa-newspaper"></i>
+                                {{ article.source }}
+                            </span>
+                            {% if article.published_at %}
+                            <span class="date">
+                                <i class="fas fa-clock"></i>
+                                {{ article.published_at.strftime('%B %d, %Y') }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% if article.link %}
+                        <a href="{{ article.link }}" target="_blank" class="read-article">
+                            Read Full Article <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-news">
+                <i class="fas fa-newspaper"></i>
+                <h3>No news available</h3>
+                <p>Check back later for the latest tech news updates.</p>
+                <a href="{{ url_for('news') }}" class="btn-primary">
+                    <i class="fas fa-sync-alt"></i> Refresh News
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+.news-hero {
+    padding: 120px 0 60px 0;
+    background: linear-gradient(135deg, var(--netflix-dark) 0%, var(--netflix-gray) 100%);
+    text-align: center;
+}
+
+.news-content {
+    padding: 60px 0;
+    background-color: var(--netflix-black);
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.news-card {
+    background-color: var(--netflix-gray);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.news-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+.news-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.news-card:hover .news-image img {
+    transform: scale(1.05);
+}
+
+.news-content-inner {
+    padding: 20px;
+}
+
+.news-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--netflix-white);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.news-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--netflix-light-gray);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.news-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.read-article {
+    color: var(--netflix-red);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: gap 0.3s ease;
+}
+
+.read-article:hover {
+    gap: 10px;
+}
+
+.no-news {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--netflix-light-gray);
+}
+
+.no-news i {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: var(--netflix-red);
+}
+
+.no-news h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--netflix-white);
+}
+
+.no-news p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .news-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .news-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .news-title {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}
